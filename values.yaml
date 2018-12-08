@@ -1,0 +1,13 @@
+# Default values for kubernetes-users.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+namespaces: {}
+# - name: new-namespace
+#   users:
+#   - user1
+#   - user2
+#   groups:
+#   - group1
+#   - group2
+

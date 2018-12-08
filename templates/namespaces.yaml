@@ -1,0 +1,47 @@
+{{- range .Values.namespaces }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .name }}
+
+---
+{{ - end }}
+
+{{ - range $index $ns := .Values.namespaces}}
+  {{ - range .users - }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ . }}
+  namespace: {{ $ns }}
+subjects:
+- kind: User
+  name: {{ . }}
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: cluster-admin
+  apiGroup: rbac.authorization.k8s.io
+
+---
+  {{ - end - }}
+  
+  {{ - range .groups - }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ . }}
+  namespace: {{ $ns }}
+subjects:
+- kind: Group
+  name: {{ . }}
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: cluster-admin
+  apiGroup: rbac.authorization.k8s.io
+
+---
+  {{ - end - }}
+
+{{ - end }}
