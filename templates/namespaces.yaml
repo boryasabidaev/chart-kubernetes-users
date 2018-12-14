@@ -1,47 +1,17 @@
-{{- range .Values.namespaces }}
+{{ range $index, $project := .Values.projects }}
+
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: {{ .name }}
-
+  name: {{ $project.name }}
 ---
-{{ - end }}
 
-{{ - range $index $ns := .Values.namespaces}}
-  {{ - range .users - }}
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
+  {{- range $index, $ns := .namespaces -}}
+apiVersion: v1
+kind: Namespace
 metadata:
-  name: {{ . }}
-  namespace: {{ $ns }}
-subjects:
-- kind: User
-  name: {{ . }}
-  apiGroup: rbac.authorization.k8s.io
-roleRef:
-  kind: Role
-  name: cluster-admin
-  apiGroup: rbac.authorization.k8s.io
-
+  name: {{ $project.name }}-{{ $ns }}
 ---
-  {{ - end - }}
-  
-  {{ - range .groups - }}
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: {{ . }}
-  namespace: {{ $ns }}
-subjects:
-- kind: Group
-  name: {{ . }}
-  apiGroup: rbac.authorization.k8s.io
-roleRef:
-  kind: Role
-  name: cluster-admin
-  apiGroup: rbac.authorization.k8s.io
+  {{- end }}
 
----
-  {{ - end - }}
-
-{{ - end }}
+{{- end }}

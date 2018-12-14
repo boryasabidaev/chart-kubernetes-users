@@ -1,0 +1,131 @@
+{{ range $index, $project := .Values.projects }}
+  {{- range $index, $user := $project.users -}}
+
+    {{- range $index, $ns := $project.namespaces -}}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ $project.name }}-{{ $user }}-admin-rb
+  namespace: {{ printf "%v-%v" $project.name $ns }}
+subjects:
+- kind: User
+  name: {{ $user }}
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: admin
+  apiGroup: rbac.authorization.k8s.io
+---
+    {{- end -}}
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ $project.name }}-{{ $user }}-admin-rb
+  namespace: {{ $project.name }}
+subjects:
+- kind: User
+  name: {{ $user }}
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: admin
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ $project.name }}-{{ $user }}-view-crb
+subjects:
+- kind: User
+  name: {{ $user }}
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: view
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ $project.name }}-{{ $user }}-view-csr-crb
+subjects:
+- kind: User
+  name: {{ $user }}
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: view-cluster-scoped-resources
+  apiGroup: rbac.authorization.k8s.io
+---
+  {{- end -}}
+
+
+  {{- range $index, $group := $project.groups -}}
+
+    {{- range $index, $ns := $project.namespaces -}}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ $project.name }}-{{ $group }}-group-admin-rb
+  namespace: {{ printf "%v-%v" $project.name $ns }}
+subjects:
+- kind: Group
+  name: {{ $group }}
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: admin
+  apiGroup: rbac.authorization.k8s.io
+---
+    {{- end -}}
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ $project.name }}-{{ $group }}-group-view-crb
+subjects:
+- kind: Group
+  name: {{ $group }}
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: view
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ $project.name }}-{{ $group }}-group-view-csr-crb
+subjects:
+- kind: Group
+  name: {{ $group }}
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: view-cluster-scoped-resources
+  apiGroup: rbac.authorization.k8s.io
+---
+  {{- end -}}
+
+{{- end }}
+
+
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: view-cluster-scoped-resources
+rules:
+- apiGroups: ["", "rbac.authorization.k8s.io", "storage.k8s.io"]
+  verbs: ["get", "list", "watch"]
+  resources: 
+    - namespaces
+    - nodes
+    - persistentvolumes
+    - roles
+    - clusterroles
+    - storageclasses
+    - events
+    - pods
+    

@@ -2,12 +2,22 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-namespaces: {}
-# - name: new-namespace
+projects: {}
+# - name: project1
+#   namespaces:
+#   - namespace1
+#   - namespace2
 #   users:
-#   - user1
-#   - user2
-#   groups:
-#   - group1
-#   - group2
-
+#   - name: user1
+#     kind: User
+#   - name: user2
+#     kind: Group
+# - name: project2
+#   namespaces:
+#   - namespace3
+#   - namespace4
+#   users:
+#   - name: user3
+#     kind: User
+#   - name: user4
+#     kind: Group
